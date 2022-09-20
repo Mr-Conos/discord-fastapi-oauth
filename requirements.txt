@@ -1,0 +1,12 @@
+uvicorn
+
+fastapi
+starlette
+itsdangerous
+
+aiohttp
+
+pyjwt
+cachetools
+
+python-dotenv
