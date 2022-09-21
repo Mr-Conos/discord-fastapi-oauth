@@ -1,7 +1,6 @@
 from typing import Dict, List, Optional
 
-from ..constants import DISCORD_IMAGE_FORMAT, DISCORD_ANIMATED_IMAGE_FORMAT, DISCORD_DEFAULT_USER_AVATAR_BASE_URL, \
-    DISCORD_USER_AVATAR_BASE_URL, DISCORD_GUILD_ICON_BASE_URL
+from .. import constants as const
 
 
 class Guild:
@@ -19,9 +18,9 @@ class Guild:
         if not self.icon_hash:
             return None
 
-        image_format = DISCORD_ANIMATED_IMAGE_FORMAT if self.is_icon_animated else DISCORD_IMAGE_FORMAT
+        image_format = const.DISCORD_ANIMATED_IMAGE_FORMAT if self.is_icon_animated else const.DISCORD_IMAGE_FORMAT
 
-        return DISCORD_GUILD_ICON_BASE_URL.format(guild_id=self.id, icon_hash=self.icon_hash, format=image_format)
+        return const.DISCORD_GUILD_ICON_BASE_URL.format(guild_id=self.id, icon_hash=self.icon_hash, format=image_format)
 
     @property
     def is_icon_animated(self) -> bool:
@@ -51,12 +50,14 @@ class User:
 
     @property
     def avatar_url(self) -> str:
-        image_format = DISCORD_ANIMATED_IMAGE_FORMAT if self.is_avatar_animated else DISCORD_IMAGE_FORMAT
+        image_format = const.DISCORD_ANIMATED_IMAGE_FORMAT if self.is_avatar_animated else const.DISCORD_IMAGE_FORMAT
 
         if not self.avatar_hash:
-            return DISCORD_DEFAULT_USER_AVATAR_BASE_URL.format(module5=int(self.discriminator) % 5)
+            return const.DISCORD_DEFAULT_USER_AVATAR_BASE_URL.format(module5=int(self.discriminator) % 5)
 
-        return DISCORD_USER_AVATAR_BASE_URL.format(user_id=self.id, avatar_hash=self.avatar_hash, format=image_format)
+        return const.DISCORD_USER_AVATAR_BASE_URL.format(
+            user_id=self.id, avatar_hash=self.avatar_hash, format=image_format
+        )
 
     @property
     def is_avatar_animated(self) -> bool:

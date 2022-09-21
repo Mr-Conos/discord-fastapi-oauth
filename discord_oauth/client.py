@@ -7,9 +7,7 @@ import jwt
 from cachetools import Cache, LRUCache
 from fastapi import Request
 
-from . import exceptions
-from .constants import DISCORD_BASE_AUTH_URL, DISCORD_TOKEN_URL, DISCORD_USER_BASE_URL, DISCORD_USER_GUILDS_URL, \
-    UNICODE_ASCII_CHARACTER_SET
+from . import exceptions, constants as const
 from .models.discord import User, Guild
 from .models.http import AccessTokenExchangePayload, AccessTokenResponse
 
@@ -18,14 +16,14 @@ class DiscordOAuthClient:
     """Client for Discord OAuth2."""
 
     def __init__(
-        self,
-        client_id: int,
-        client_secret: str,
-        redirect_uri: str,
-        scopes: Tuple[str, ...],
-        user_cache: Cache = None,
-        prompt: str = "consent"
-    ):
+            self,
+            client_id: int,
+            client_secret: str,
+            redirect_uri: str,
+            scopes: Tuple[str, ...],
+            user_cache: Cache = None,
+            prompt: str = "consent"
+    ) -> None:
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
@@ -54,12 +52,12 @@ class DiscordOAuthClient:
             except json.JSONDecodeError as e:
                 raise e
 
-    async def init(self):
+    async def init(self) -> None:
         self.client_session = aiohttp.ClientSession()
 
     def create_session(self, request: Request) -> str:
         rand = SystemRandom()
-        decoded_state = "".join(rand.choice(UNICODE_ASCII_CHARACTER_SET) for _ in range(30))
+        decoded_state = "".join(rand.choice(const.UNICODE_ASCII_CHARACTER_SET) for _ in range(30))
         decoded_state_data = {"state_secret": decoded_state}
         encoded_state = jwt.encode(decoded_state_data, self.client_secret, algorithm="HS256")
 
@@ -72,7 +70,7 @@ class DiscordOAuthClient:
         redirect_uri = f"redirect_uri={self.redirect_uri}"
         prompt = f"prompt={self.prompt}"
 
-        return f"{DISCORD_BASE_AUTH_URL}?{response_type}&{client_id}&{scope}&{state}&{redirect_uri}&{prompt}"
+        return f"{const.DISCORD_BASE_AUTH_URL}?{response_type}&{client_id}&{scope}&{state}&{redirect_uri}&{prompt}"
 
     async def callback(self, code: str, state: str, request: Request):
         decoded_received_state = jwt.decode(state, self.client_secret, algorithms="HS256")
@@ -91,7 +89,7 @@ class DiscordOAuthClient:
             "redirect_uri": self.redirect_uri
         }
 
-        data: AccessTokenResponse = await self._request("post", DISCORD_TOKEN_URL, payload)
+        data: AccessTokenResponse = await self._request("post", const.DISCORD_TOKEN_URL, payload)
 
         del request.session["DISCORD_OAUTH2_STATE"]
         request.session["DISCORD_ACCESS_TOKEN"] = data["access_token"]
@@ -104,7 +102,7 @@ class DiscordOAuthClient:
                 pass
 
         try:
-            data = await self._request("get", DISCORD_USER_BASE_URL, auth=request)
+            data = await self._request("get", const.DISCORD_USER_BASE_URL, auth=request)
             user = User(data)
             request.session["DISCORD_USER_ID"] = user.id
             self.user_cache[user.id] = user
@@ -130,7 +128,7 @@ class DiscordOAuthClient:
             await self.fetch_user(request)
 
         try:
-            data = await self._request("get", DISCORD_USER_GUILDS_URL, auth=request)
+            data = await self._request("get", const.DISCORD_USER_GUILDS_URL, auth=request)
             guilds = {int(guild_data["id"]): Guild(guild_data) for guild_data in data}
             self.user_cache[request.session["DISCORD_USER_ID"]].guilds = guilds
             return list(guilds.values())
