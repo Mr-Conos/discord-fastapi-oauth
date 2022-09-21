@@ -9,7 +9,7 @@ from starlette.middleware import Middleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from discord_oauth import DiscordOAuthClient
-from discord_oauth.exceptions import HttpException, Unauthorized
+from discord_oauth.exceptions import DiscordOAuthException, Unauthorized
 
 load_dotenv()
 
@@ -44,14 +44,11 @@ async def callback(code: str, state: str, request: Request):
     try:
         await discord.callback(code, state, request)
         return {"success": True}
-    except HttpException:
+    except DiscordOAuthException:
         return {"success": False}
 
 
-@app.get(
-    "/home",
-    dependencies=[Depends(DiscordOAuthClient.is_authorized)]
-)
+@app.get("/home", dependencies=[Depends(DiscordOAuthClient.is_authorized)])
 async def home(request: Request):
     user = await discord.fetch_user(request)
     guilds = await discord.fetch_guilds(request)

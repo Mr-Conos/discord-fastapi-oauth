@@ -45,7 +45,7 @@ class DiscordOAuthClient:
             elif resp.status == 403:
                 raise exceptions.AccessDenied()
             elif resp.status == 429:
-                raise exceptions.RateLimited(await resp.json(), resp.headers)
+                raise exceptions.RateLimited()
 
             try:
                 return await resp.json()
@@ -79,7 +79,7 @@ class DiscordOAuthClient:
         )
 
         if decoded_received_state != decoded_stored_state:
-            return False
+            raise exceptions.InvalidStatePassed()
 
         payload: AccessTokenExchangePayload = {
             "client_id": self.client_id,
