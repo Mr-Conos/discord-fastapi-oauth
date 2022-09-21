@@ -94,6 +94,13 @@ class DiscordOAuthClient:
         del request.session["DISCORD_OAUTH2_STATE"]
         request.session["DISCORD_ACCESS_TOKEN"] = data["access_token"]
 
+    def revoke(self, request: Request):
+        if "DISCORD_USER_ID" not in request.session:
+            return
+
+        del self.user_cache[request.session["DISCORD_USER_ID"]]
+        request.session.clear()
+
     async def fetch_user(self, request: Request) -> User:
         if "DISCORD_USER_ID" in request.session:
             try:
