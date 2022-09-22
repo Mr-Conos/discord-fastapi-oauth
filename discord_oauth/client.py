@@ -146,8 +146,7 @@ class DiscordOAuthClient:
 
             raise e
 
-    async def is_authorized(self, request: Request):
+    @staticmethod
+    async def is_authorized(request: Request):
         if "DISCORD_ACCESS_TOKEN" not in request.session:
             raise exceptions.Unauthorized
-
-        await self.fetch_user(request)
