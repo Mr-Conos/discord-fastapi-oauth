@@ -38,7 +38,7 @@ setuptools.setup(
     author="Riksou",
     url="https://github.com/Riksou/discord-fastapi-oauth",
     version=version,
-    packages=["discord_oauth"],
+    packages=setuptools.find_packages(),
     install_requires=requirements,
     python_requires=">=3.9"
 )
