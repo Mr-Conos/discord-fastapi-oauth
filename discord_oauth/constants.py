@@ -14,6 +14,6 @@ DISCORD_ANIMATED_IMAGE_FORMAT = "gif"
 
 DISCORD_USER_AVATAR_BASE_URL = DISCORD_IMAGE_BASE_URL + "/avatars/{user_id}/{avatar_hash}.{format}"
 DISCORD_DEFAULT_USER_AVATAR_BASE_URL = DISCORD_IMAGE_BASE_URL + "/embed/avatars/{modulo5}.png"
-DISCORD_GUILD_ICON_BASE_URL = DISCORD_IMAGE_BASE_URL + "icons/{guild_id}/{icon_hash}.{format}"
+DISCORD_GUILD_ICON_BASE_URL = DISCORD_IMAGE_BASE_URL + "/icons/{guild_id}/{icon_hash}.{format}"
 
 UNICODE_ASCII_CHARACTER_SET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
