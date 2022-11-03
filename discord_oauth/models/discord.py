@@ -53,7 +53,7 @@ class User:
         image_format = const.DISCORD_ANIMATED_IMAGE_FORMAT if self.is_avatar_animated else const.DISCORD_IMAGE_FORMAT
 
         if not self.avatar_hash:
-            return const.DISCORD_DEFAULT_USER_AVATAR_BASE_URL.format(module5=int(self.discriminator) % 5)
+            return const.DISCORD_DEFAULT_USER_AVATAR_BASE_URL.format(modulo5=int(self.discriminator) % 5)
 
         return const.DISCORD_USER_AVATAR_BASE_URL.format(
             user_id=self.id, avatar_hash=self.avatar_hash, format=image_format
